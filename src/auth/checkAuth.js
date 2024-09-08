@@ -9,10 +9,10 @@ const HEADER = {
 
 const apiKey = async (req, res, next) => {
   try {
-    const key = req.header[HEADER.API_KEY]?.toString()
+    const key = req.headers[HEADER.API_KEY]?.toString()
     if (!key) {
       return res.status(403).json({
-        message: 'Forbidden error'
+        message: 'Api key not found!'
       })
     }
 
@@ -20,7 +20,7 @@ const apiKey = async (req, res, next) => {
     const objKey = await findById(key)
     if (!objKey) {
       return res.status(403).json({
-        message: 'Forbidden error'
+        message: 'Api key forbidden error!'
       })
     }
 
@@ -33,7 +33,7 @@ const checkPermission = (permission) => {
   return (req, res, next) => {
     if (!req.objKey.permissions) {
       return res.status(403).json({
-        message: 'Permission denied'
+        message: 'Permission denied:: not found'
       })
     }
 
@@ -41,7 +41,7 @@ const checkPermission = (permission) => {
     const validPermision = req.objKey.permissions.includes(permission)
     if (!validPermision) {
       return res.status(403).json({
-        message: 'Permission denied'
+        message: 'Permission denied:: valid permission'
       })
     }
 
@@ -49,7 +49,15 @@ const checkPermission = (permission) => {
   }
 }
 
+//middleware handler error
+const asyncHandler = (fn) => {
+  return (req, res, next) => {
+    fn(req, res, next).catch(next)
+  }
+}
+
 module.exports = {
   apiKey,
-  checkPermission
+  checkPermission,
+  asyncHandler
 }
