@@ -17,6 +17,13 @@ const RoleShop = {
 }
 
 class AccessService {
+  static logout = async (keyStore) => {
+    const delKey = await KeyTokenService.removeKeyById(keyStore._id)
+
+    console.log(delKey)
+    return delKey
+  }
+
   static login = async ({ email, password, refreshToken = null }) => {
     /**
      * 1- check email in db
@@ -100,7 +107,7 @@ class AccessService {
       const privateKey = crypto.randomBytes(64).toString('hex')
       const publicKey = crypto.randomBytes(64).toString('hex')
 
-      console.log({ privateKey, publicKey }) // save collection key store
+      // save collection key store
       const keyStore = await KeyTokenService.createKeyToken({
         userId: newShop._id,
         publicKey,
